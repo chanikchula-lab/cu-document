@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดทำหนังสือราชการดิจิทัล - จุฬาลงกรณ์มหาวิทยาลัย (TH SarabunPSK 100%)</title>
+    <title>ระบบจัดทำหนังสือราชการดิจิทัล - จุฬาลงกรณ์มหาวิทยาลัย</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
-        /* โดดเด่นด้วยการโหลด Web Font TH SarabunPSK สำหรับการแสดงผลที่สมบูรณ์แบบ */
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
         
         @font-face {
             font-family: 'TH SarabunPSK';
@@ -26,73 +25,79 @@
             font-style: normal;
         }
 
-        .cu-document-font {
+        .sarabun-font {
             font-family: 'TH SarabunPSK', 'Sarabun', sans-serif !important;
         }
 
-        /* จำลองสัดส่วนหน้ากระดาษ A4 ตั้งกั้นหน้าตามระเบียบงานสารบรรณ (ซ้าย 3 ซม. ขวา 2 ซม.) */
-        .a4-sheet {
+        /* รูปแบบจำลองหน้ากระดาษ A4 */
+        .a4-page {
             width: 210mm;
-            min-height: 297mm;
-            padding-top: 25mm;
-            padding-bottom: 25mm;
-            padding-left: 30mm;
-            padding-right: 20mm;
+            height: 297mm;
+            padding-top: 25mm;    
+            padding-bottom: 20mm; 
+            padding-left: 30mm;   
+            padding-right: 20mm;  
             background-color: white;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3);
             box-sizing: border-box;
             color: black;
             line-height: 1.25;
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
         }
 
-        /* การจัดแนวข้อความในย่อหน้าหลักแบบกระจายตัวเสมอกัน (Thai Distributed) */
         .thai-justify {
             text-align: justify;
             text-justify: inter-character;
+            white-space: pre-wrap; 
+            word-break: break-all;
         }
 
-        /* คลาสสไตล์ระเบียบขนาดอักษรสารบรรณ */
-        .font-size-16 {
-            font-size: 16pt !important;
-            font-weight: normal !important;
-        }
-
-        .font-size-16-bold {
-            font-size: 16pt !important;
-            font-weight: bold !important;
-        }
-        
-        .font-size-29-bold {
-            font-size: 29pt !important;
-            font-weight: bold !important;
-        }
-        
-        /* ระยะย่อหน้าบรรทัดแรกเยื้อง 2.5 ซม. */
-        .paragraph-indent {
-            text-indent: 2.5cm !important;
+        @media print {
+            body { background: white !important; color: black !important; }
+            header, section:first-of-type { display: none !important; }
+            main { display: block !important; padding: 0 !important; margin: 0 !important; }
+            .a4-page {
+                width: 210mm !important;
+                height: 297mm !important;
+                padding-top: 25mm !important;
+                padding-bottom: 20mm !important;
+                padding-left: 30mm !important;
+                padding-right: 20mm !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                page-break-after: always;
+            }
+            .a4-page:last-child {
+                page-break-after: avoid;
+            }
+            @page { size: A4 portrait; margin: 0; }
         }
     </style>
 </head>
-<body class="bg-slate-900 min-h-screen flex flex-col antialiased text-slate-200 cu-document-font">
+<body class="bg-slate-900 min-h-screen flex flex-col antialiased text-slate-200 sarabun-font">
 
     <header class="bg-slate-800 border-b border-slate-700 px-6 py-4 flex flex-wrap justify-between items-center gap-4">
         <div class="flex items-center gap-3">
-            <div class="w-9 h-9 rounded-xl bg-pink-600 flex items-center justify-center font-bold text-white shadow-sm">CU</div>
+            <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center font-bold text-white text-lg shadow-sm">CU</div>
             <div>
-                <h1 class="text-base font-bold tracking-wide text-white">ระบบเอกสารราชการจุฬาฯ (ตราพระเกี้ยวและฟอนต์แท้ 100%)</h1>
-                <p class="text-xs text-slate-400">กำหนดกั้นขอบซ้าย 3 ซม. ขวา 2 ซม. / ย่อหน้า 2.5 ซม. / ขนาดฟอนต์ 29pt และ 16pt ตัวหนาตรงตามรูปแบบ</p>
+                <h1 class="text-xl font-bold tracking-wide text-white">ระบบจัดการงานสารบรรณดิจิทัล (จุฬาลงกรณ์มหาวิทยาลัย)</h1>
+                <p class="text-sm text-slate-400">แก้ไขปัญหา: ตราพระเกี้ยวใช้ลิงก์ตรงจากเซิร์ฟเวอร์หลักจุฬาฯ แสดงผลได้ 100%</p>
             </div>
         </div>
         
         <div class="flex flex-wrap items-center gap-3">
-            <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5">
-                <span class="text-xs font-semibold text-slate-400 mr-2">💾 ชื่อไฟล์:</span>
-                <input type="text" id="file-name-input" value="หนังสือราชการ_จุฬาลงกรณ์" class="bg-transparent text-sm text-white font-medium outline-none w-52 focus:text-pink-400">
+            <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg px-3 py-2">
+                <span class="text-base font-semibold text-slate-400 mr-2">💾 ชื่อไฟล์:</span>
+                <input type="text" id="file-name-input" value="หนังสือราชการ_จุฬาลงกรณ์" class="bg-transparent text-base text-white font-medium outline-none w-52 focus:text-pink-400">
             </div>
-            <button onclick="triggerExportWord()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg text-xs tracking-wider transition cursor-pointer">
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-lg text-base tracking-wider transition cursor-pointer">
+                🖨️ พิมพ์เอกสาร
+            </button>
+            <button onclick="triggerExportWord()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-lg text-base tracking-wider transition cursor-pointer">
                 📝 ดาวน์โหลดไฟล์ Word (.doc)
             </button>
-            <button onclick="triggerExportPDF()" class="bg-pink-600 hover:bg-pink-700 text-white font-semibold px-4 py-2 rounded-lg text-xs tracking-wider transition cursor-pointer">
+            <button onclick="triggerExportPDF()" class="bg-pink-600 hover:bg-pink-700 text-white font-bold px-5 py-2.5 rounded-lg text-base tracking-wider transition cursor-pointer">
                 📄 ดาวน์โหลด PDF
             </button>
         </div>
@@ -100,140 +105,136 @@
 
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
         
-        <section class="w-full lg:w-[35%] p-5 overflow-y-auto bg-slate-100 text-slate-800 border-r border-slate-300 space-y-4">
+        <section class="w-full lg:w-[35%] p-6 overflow-y-auto bg-slate-100 text-slate-800 border-r border-slate-300 space-y-6">
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">รูปแบบเอกสาร</label>
-                <div class="grid grid-cols-2 gap-1 bg-slate-200 p-1 rounded-xl">
-                    <button type="button" id="toggle-internal" onclick="changeMode('internal')" class="py-2 px-3 rounded-lg font-bold text-xs transition bg-white text-slate-800 shadow-xs">
+                <label class="block text-base font-bold uppercase tracking-wider text-slate-600 mb-2">ประเภทหนังสือราชการ</label>
+                <div class="grid grid-cols-2 gap-2 bg-slate-200 p-1.5 rounded-xl">
+                    <button type="button" id="toggle-internal" onclick="changeMode('internal')" class="py-3 px-4 rounded-lg font-bold text-base transition bg-white text-slate-800 shadow-sm cursor-pointer">
                         บันทึกข้อความ (ภายใน)
                     </button>
-                    <button type="button" id="toggle-external" onclick="changeMode('external')" class="py-2 px-3 rounded-lg font-bold text-xs transition text-slate-600 hover:text-slate-900">
+                    <button type="button" id="toggle-external" onclick="changeMode('external')" class="py-3 px-4 rounded-lg font-bold text-base transition text-slate-600 hover:text-slate-900 cursor-pointer">
                         หนังสือภายนอก
                     </button>
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-1.5">
-                    ข้อมูลหัวเรื่องเอกสาร
-                </h3>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2">ข้อมูลส่วนหัวหนังสือ</h3>
                 
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ที่ (เลขที่หนังสือออก)</label>
-                        <input type="text" id="data-doc-id" value="อว ๖๔/" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">ที่ (เลขที่หนังสือ)</label>
+                        <input type="text" id="data-doc-id" value="อว 64/" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">วันที่</label>
-                        <input type="text" id="data-date" value="มิถุนายน ๒๕๖๔" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">วัน เดือน ปี</label>
+                        <input type="text" id="data-date" value="13 กรกฎาคม 2569" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                 </div>
 
-                <div id="wrapper-internal-fields" class="space-y-3">
+                <div id="wrapper-internal-fields" class="space-y-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ส่วนงาน</label>
-                        <input type="text" id="data-dept" value="คณะ..." oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">ส่วนงาน</label>
+                        <input type="text" id="data-dept" value="สำนักบริหารหลักสูตรและคณาจารย์ประจำ จุฬาลงกรณ์มหาวิทยาลัย" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">โทรศัพท์</label>
-                            <input type="text" id="data-phone" value="๐ ๐๐๐๐ ๐๐๐๐" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                            <label class="block text-base font-bold text-slate-700 mb-1">โทรศัพท์</label>
+                            <input type="text" id="data-phone" value="0 2218 0000" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">โทรสาร</label>
-                            <input type="text" id="data-fax" value="๐ ๐๐๐๐ ๐๐๐๐" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                            <label class="block text-base font-bold text-slate-700 mb-1">โทรสาร</label>
+                            <input type="text" id="data-fax" value="0 2218 1111" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-600 mb-0.5">เรื่อง</label>
-                    <input type="text" id="data-subject" value="ขออนุมัติจัดโครงการสัมมนาเชิงปฏิบัติการ" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none font-semibold">
+                    <label class="block text-base font-bold text-slate-700 mb-1">เรื่อง</label>
+                    <input type="text" id="data-subject" value="ขออนุมัติจัดโครงการสัมมนาเชิงปฏิบัติการระบบสารบรรณดิจิทัล" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500 font-semibold">
                 </div>
 
                 <div>
-                    <label class="block text-[11px] font-bold text-slate-600 mb-0.5">เรียน</label>
-                    <input type="text" id="data-learn" value="คณบดีคณะ..." oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                    <label class="block text-base font-bold text-slate-700 mb-1">เรียน</label>
+                    <input type="text" id="data-learn" value="อธิการบดี" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                 </div>
 
-                <div id="wrapper-external-fields" class="space-y-3 hidden">
+                <div id="wrapper-through-field">
+                    <label class="block text-base font-bold text-slate-700 mb-1">ผ่าน (ถ้ามี)</label>
+                    <input type="text" id="data-through" value="" placeholder="เช่น รองอธิการบดี (ถ้าไม่มีให้เว้นว่างไว้)" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
+                </div>
+
+                <div id="wrapper-external-fields" class="space-y-4 hidden">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">อ้างถึง</label>
-                        <input type="text" id="data-ref" value="-" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">อ้างถึง</label>
+                        <input type="text" id="data-ref" value="หนังสือที่ อว 64.01/100 ลงวันที่ 1 มิถุนายน 2569" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">สิ่งที่ส่งมาด้วย</label>
-                        <input type="text" id="data-attach" value="-" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">สิ่งที่ส่งมาด้วย</label>
+                        <input type="text" id="data-attach" value="กำหนดการและรายละเอียดโครงการจำนวน 1 ชุด" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
-                <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
-                    <h3 class="text-xs font-bold text-slate-900">บล็อกย่อหน้าเนื้อหา</h3>
-                    <button type="button" onclick="appendParagraphRow()" class="text-[11px] font-bold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-300 hover:bg-slate-200 cursor-pointer">+ เพิ่มย่อหน้า</button>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                    <h3 class="text-base font-bold text-slate-900">เนื้อหาเอกสาร</h3>
+                    <button type="button" onclick="addNewParagraphField()" class="text-xs bg-pink-600 hover:bg-pink-700 text-white font-bold px-2 py-1 rounded">
+                        + เพิ่มย่อหน้า
+                    </button>
                 </div>
-                <div id="box-paragraphs-inputs" class="space-y-2.5"></div>
+                <div id="box-paragraphs-inputs" class="space-y-4"></div>
             </div>
 
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
-                <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide border-b border-slate-100 pb-1.5">ผู้ลงนามท้ายเอกสาร</h3>
-                <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2">ผู้ลงนามท้ายเอกสาร</h3>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ชื่อผู้ลงนาม (ในวงเล็บ)</label>
-                        <input type="text" id="data-sign-name" value="ศาสตราจารย์ ดร.วิเลิศ ภูริวัช" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">ชื่อในวงเล็บ</label>
+                        <input type="text" id="data-sign-name" value="ศาสตราจารย์ ดร.วิเลิศ ภูริวัช" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ตำแหน่ง</label>
-                        <input type="text" id="data-sign-position" value="อธิการบดี" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none">
+                        <label class="block text-base font-bold text-slate-700 mb-1">ตำแหน่ง</label>
+                        <input type="text" id="data-sign-position" value="อธิการบดี" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                     </div>
                 </div>
 
-                <div id="wrapper-external-footer" class="space-y-2 border-t border-slate-100 pt-2 hidden">
-                    <div class="grid grid-cols-2 gap-2">
+                <div id="wrapper-external-footer" class="space-y-3 border-t border-slate-200 pt-3 hidden">
+                    <label class="block text-base font-bold text-slate-900 uppercase tracking-wide">ส่วนท้ายเอกสารติดต่อ (Footer)</label>
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ชื่อส่วนงานหลัก</label>
-                            <input type="text" id="footer-dept-main" value="จุฬาลงกรณ์มหาวิทยาลัย" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs outline-none">
+                            <label class="block text-sm font-bold text-slate-700 mb-1">ชื่อส่วนงานหลัก</label>
+                            <input type="text" id="footer-dept-main" value="สำนักบริหารหลักสูตร" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-base outline-none">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">ภาควิชา/กลุ่มภารกิจ</label>
-                            <input type="text" id="footer-dept-sub" value="สำนักบริหารงาน..." oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs outline-none">
+                            <label class="block text-sm font-bold text-slate-700 mb-1">ภาควิชา/กลุ่มภารกิจ</label>
+                            <input type="text" id="footer-dept-sub" value="ฝ่ายวิชาการสารบรรณดิจิทัล" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-base outline-none">
                         </div>
                     </div>
-                    <div class="grid grid-cols-3 gap-2">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">โทรศัพท์</label>
-                            <input type="text" id="footer-phone" value="๐ ๒๒๑๘ ๐๐๐๐" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">โทรสาร</label>
-                            <input type="text" id="footer-fax" value="๐ ๒๒๑๘ ๐๐๐๐" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-600 mb-0.5">อีเมล</label>
-                            <input type="text" id="footer-email" value="chula@chula.ac.th" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-1.5 text-xs outline-none">
-                        </div>
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">ไปรษณีย์อิเล็กทรอนิกส์ (Email)</label>
+                        <input type="text" id="footer-email" value="saraban@cu.ac.th" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-2 text-base outline-none">
                     </div>
                 </div>
             </div>
         </section>
 
-        <section class="w-full lg:w-[65%] bg-slate-600 p-6 flex justify-center overflow-y-auto">
-            <div id="preview-area" class="a4-sheet cu-document-font text-black select-text"></div>
-        </section>
+        <section class="w-full lg:w-[65%] bg-slate-600 p-6 flex flex-col items-center overflow-y-auto" id="preview-container">
+            </section>
     </main>
 
     <script>
         let currentDocumentMode = 'internal'; 
 
         let textParagraphs = [
-            { text: 'ด้วย สำนักบริหารหลักสูตรและคณาจารย์ประจำจุฬาลงกรณ์มหาวิทยาลัย ได้รับนโยบายในการพัฒนาระบบเอกสารสารบรรณและการบริหารดิจิทัลครบวงจร ประจำปีการศึกษา ๒๕๖๙ เพื่อสร้างความสะดวกและความถูกต้องสอดคล้องตามระเบียบงานสารบรรณ' },
-            { text: 'การนี้ เพื่อให้การดำเนินงานดังกล่าวเป็นไปด้วยความเรียบร้อยและมีประสิทธิภาพสูงสุด จึงใคร่ขออนุมัติจัดตั้งคณะทำงานและดำเนินโครงการสัมมนาเชิงปฏิบัติการตามรายละเอียดที่แนบมาพร้อมนี้' },
-            { text: 'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติ' }
+            { label: 'ย่อหน้าที่ 1', text: 'ด้วย บริษัท สคูลดิโอ จำกัด ได้จัดโครงการอบรมเชิงปฏิบัติการ หลักสูตร AI Automation Transformation รุ่นที่ 3 ในรูปแบบการเรียนออนไลน์ควบคู่กับการจัด Workshop เชิงปฏิบัติการ ณ สถานที่ของบริษัท สคูลดิโอ จำกัด โดยเรียนออนไลน์ตั้งแต่วันที่ 4 กรกฎาคม 2569 และเข้าร่วม Workshop เชิงปฏิบัติการในวันเสาร์ที่ 11 กรกฎาคม 2569 วันเสาร์ที่ 18 กรกฎาคม 2569 และวันเสาร์ที่ 26 กรกฎาคม 2569 วัตถุประสงค์เพื่อเสริมสร้างความรู้และทักษะด้านการออกแบบและพัฒนาระบบ AI Automation เพื่อนำมาประยุกต์ใช้ในกระบวนการทำงานขององค์กร อันจะช่วยเพิ่มประสิทธิภาพในการทำงาน ลดระยะเวลาในการดำเนินงาน และลดโอกาสการเกิดข้อผิดพลาดจากการปฏิบัติงานของบุคลากร' },
+            { label: 'ย่อหน้าที่ 2', text: 'โครงการดังกล่าวมุ่งเน้นการพัฒนาความรู้ความเข้าใจด้าน AI Automation และ Workflow Automation เพื่อให้บุคลากรสามารถวิเคราะห์และคัดเลือกกระบวนการทำงานที่เหมาะสมในการนำเทคโนโลยี AI มาใช้งาน ตลอดจนสามารถสร้างต้นแบบของระบบ Automation ที่สามารถนำไปใช้งานจริงภายในหน่วยงาน และยกระดับทักษะของบุคลากรให้สอดคล้องและรองรับการเปลี่ยนแปลงด้านเทคโนโลยีและนโยบายดิจิทัลขององค์กร (รายละเอียดตามเอกสารแนบ)' },
+            { label: 'ย่อหน้าที่ 3', text: 'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติจัดตั้งโครงการและงบประมาณสนับสนุนดังกล่าวด้วย จะเป็นพระคุณยิ่ง' }
         ];
 
-        // URL ตราพระเกี้ยวของแท้
-        const realChulaLogoUrl = "https://upload.wikimedia.org/wikipedia/commons/e/e0/Phra_Kieo_Chula.png";
+        // [แก้ไขลิงก์รูปภาพเป็น Direct Link สาธารณะ] ดึงรูปตราพระเกี้ยวโดยตรงจากระบบเว็บไซต์หลักของจุฬาฯ ปลอดภัยจากสิทธิ์ล็อกอินแน่นอน
+        const logoBlackUrl = "https://www.chula.ac.th/wp-content/uploads/2018/01/chula-ตราพระเกี้ยว-3.png";
+        const logoColorUrl = "https://www.chula.ac.th/wp-content/uploads/2018/01/chula-ตราพระเกี้ยว-3.png";
 
         function changeMode(modeSelection) {
             currentDocumentMode = modeSelection;
@@ -242,19 +243,22 @@
             const fieldsInternal = document.getElementById('wrapper-internal-fields');
             const fieldsExternal = document.getElementById('wrapper-external-fields');
             const footerExternal = document.getElementById('wrapper-external-footer');
+            const wrapperThrough = document.getElementById('wrapper-through-field');
 
             if (modeSelection === 'internal') {
-                btnInternal.className = "py-2 px-3 rounded-lg font-bold text-xs transition bg-white text-slate-800 shadow-xs";
-                btnExternal.className = "py-2 px-3 rounded-lg font-bold text-xs transition text-slate-600 hover:text-slate-900";
+                btnInternal.className = "py-3 px-4 rounded-lg font-bold text-base transition bg-white text-slate-800 shadow-sm cursor-pointer";
+                btnExternal.className = "py-3 px-4 rounded-lg font-bold text-base transition text-slate-600 hover:text-slate-900 cursor-pointer";
                 fieldsInternal.classList.remove('hidden');
                 fieldsExternal.classList.add('hidden');
                 footerExternal.classList.add('hidden');
+                wrapperThrough.classList.remove('hidden');
             } else {
-                btnInternal.className = "py-2 px-3 rounded-lg font-bold text-xs transition text-slate-600 hover:text-slate-900";
-                btnExternal.className = "py-2 px-3 rounded-lg font-bold text-xs transition bg-white text-slate-800 shadow-xs";
+                btnInternal.className = "py-3 px-4 rounded-lg font-bold text-base transition text-slate-600 hover:text-slate-900 cursor-pointer";
+                btnExternal.className = "py-3 px-4 rounded-lg font-bold text-base transition bg-white text-slate-800 shadow-sm cursor-pointer";
                 fieldsInternal.classList.add('hidden');
                 fieldsExternal.classList.remove('hidden');
                 footerExternal.classList.remove('hidden');
+                wrapperThrough.classList.add('hidden');
             }
             processRealtimePreview();
         }
@@ -264,25 +268,27 @@
             container.innerHTML = '';
             textParagraphs.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = "flex gap-2 items-start bg-slate-50 p-2 rounded-lg border border-slate-200";
+                div.className = "space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-200";
                 div.innerHTML = `
-                    <span class="text-xs font-bold text-slate-400 mt-2">${index + 1}</span>
-                    <textarea class="flex-1 border border-slate-300 rounded-lg p-1.5 text-xs outline-none bg-white text-slate-800 resize-none h-16" oninput="updateParagraphText(${index}, this.value)">${item.text}</textarea>
-                    <button type="button" onclick="removeParagraphRow(${index})" class="text-red-500 hover:text-red-700 font-bold text-xs mt-2 cursor-pointer">🗑️</button>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-bold text-slate-500">${item.label}</span>
+                        ${index > 0 ? `<button onclick="removeParagraphField(${index})" class="text-xs text-red-500 hover:underline">ลบ</button>` : ''}
+                    </div>
+                    <textarea class="w-full border border-slate-300 rounded-lg p-2.5 text-base outline-none bg-white text-slate-800 h-24" oninput="updateParagraphText(${index}, this.value)">${item.text}</textarea>
                 `;
                 container.appendChild(div);
             });
         }
 
-        function appendParagraphRow() {
-            textParagraphs.push({ text: 'พิมพ์ข้อความย่อหน้าใหม่ที่นี่...' });
+        function addNewParagraphField() {
+            textParagraphs.push({ label: `ย่อหน้าที่ ${textParagraphs.length + 1}`, text: '' });
             buildParagraphControls();
             processRealtimePreview();
         }
 
-        function removeParagraphRow(index) {
-            if (textParagraphs.length <= 1) return;
+        function removeParagraphField(index) {
             textParagraphs.splice(index, 1);
+            textParagraphs.forEach((p, idx) => p.label = `ย่อหน้าที่ ${idx + 1}`);
             buildParagraphControls();
             processRealtimePreview();
         }
@@ -292,12 +298,15 @@
             processRealtimePreview();
         }
 
-        // ฟังก์ชันสร้างโครงสร้างเอกสารราชการที่ถูกต้องตามระเบียบงานสารบรรณ (ลบเส้นคั่นออก, หัวข้อฟอร์มทั้งหมดเป็น 16pt ตัวหนา)
-        function generateDocumentHTML(isForExport = false) {
+        function processRealtimePreview() {
+            const container = document.getElementById('preview-container');
+            container.innerHTML = ''; 
+
             const docId = document.getElementById('data-doc-id').value;
             const docDate = document.getElementById('data-date').value;
             const subject = document.getElementById('data-subject').value;
             const learn = document.getElementById('data-learn').value;
+            const through = document.getElementById('data-through').value;
             const dept = document.getElementById('data-dept').value;
             const phone = document.getElementById('data-phone').value;
             const fax = document.getElementById('data-fax').value;
@@ -305,217 +314,185 @@
             const attach = document.getElementById('data-attach').value;
             const signName = document.getElementById('data-sign-name').value;
             const signPosition = document.getElementById('data-sign-position').value;
-
             const fDeptMain = document.getElementById('footer-dept-main').value;
             const fDeptSub = document.getElementById('footer-dept-sub').value;
-            const fPhone = document.getElementById('footer-phone').value;
-            const fFax = document.getElementById('footer-fax').value;
             const fEmail = document.getElementById('footer-email').value;
 
-            let mainContentHTML = '';
+            const page1 = document.createElement('div');
+            page1.className = 'a4-page';
+            page1.id = 'page-1-render';
+            
+            let throughRowHTML = '';
+            if (currentDocumentMode === 'internal' && through.trim() !== '') {
+                throughRowHTML = `
+                    <tr style="height: 35px;">
+                        <td style="vertical-align: bottom; border: none;" colspan="2">
+                            <div style="padding-left: 36px; display: inline-block;">
+                                <span style="font-size: 16pt; font-weight: bold;">ผ่าน</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${through}</span>
+                            </div>
+                        </td>
+                    </tr>`;
+            }
+
+            let headerHTML = '';
+            if (currentDocumentMode === 'internal') {
+                headerHTML = `
+                    <div style="position: relative; width: 100%; height: 2.0cm; margin-bottom: 5mm;">
+                        <img src="${logoBlackUrl}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
+                        <div style="font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 1mm;">บันทึกข้อความ</div>
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
+                        <tr style="height: 35px;">
+                            <td colspan="2" style="vertical-align: bottom; border: none; text-align: left;">
+                                <span style="font-size: 20pt; font-weight: bold;">ส่วนงาน</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${dept}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: bold;">โทร.</span>&nbsp;<span style="font-size: 16pt; font-weight: normal;">${phone}</span>
+                            </td>
+                        </tr>
+                        <tr style="height: 35px;">
+                            <td style="width: 50%; vertical-align: bottom; border: none;"><span style="font-size: 20pt; font-weight: bold;">ที่</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${docId}</span></td>
+                            <td style="width: 50%; text-align: left; vertical-align: bottom; border: none;"><span style="font-size: 16pt; font-weight: bold;">วันที่</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${docDate}</span></td>
+                        </tr>
+                        <tr style="height: 35px;"><td style="vertical-align: bottom; border: none;" colspan="2"><span style="font-size: 20pt; font-weight: bold;">เรื่อง</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${subject}</span></td></tr>
+                        <tr style="height: 35px;"><td style="vertical-align: bottom; border: none;" colspan="2"><span style="font-size: 16pt; font-weight: bold;">เรียน</span>&nbsp;&nbsp;<span style="font-size: 16pt; font-weight: normal;">${learn}</span></td></tr>
+                        ${throughRowHTML}
+                    </table>`;
+            } else {
+                headerHTML = `
+                    <div style="width: 100%; text-align: center; margin-bottom: 5mm;">
+                        <img src="${logoColorUrl}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
+                    </div>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-family: 'TH SarabunPSK'; border: none;">
+                        <tr><td style="width: 50%; vertical-align: top; border: none; font-size: 16pt;"><span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;<span style="font-weight: normal;">${docId}</span></td><td style="width: 50%; text-align: right; vertical-align: top; border: none; font-size: 16pt;">จุฬาลงกรณ์มหาวิทยาลัย<br>ถนนพญาไท กทม. 10330</td></tr>
+                    </table>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
+                        <tr><td style="width: 50%; border: none;"></td><td style="width: 50%; text-align: left; vertical-align: bottom; font-size: 16pt;">${docDate}</td></tr>
+                    </table>
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
+                        <tr style="height: 28px;"><td style="width: 18%; vertical-align: top; border: none; font-size: 16pt; font-weight: bold;">เรื่อง</td><td style="width: 82%; vertical-align: top; border: none; font-size: 16pt;">${subject}</td></tr>
+                        <tr style="height: 28px;"><td style="vertical-align: top; border: none; font-size: 16pt; font-weight: bold;">เรียน</td><td style="width: 82%; vertical-align: top; border: none; font-size: 16pt;">${learn}</td></tr>
+                        <tr style="height: 28px;"><td style="vertical-align: top; border: none; font-size: 16pt; font-weight: bold;">อ้างถึง</td><td style="width: 82%; vertical-align: top; border: none; font-size: 16pt;">${ref}</td></tr>
+                        <tr style="height: 28px;"><td style="vertical-align: top; border: none; font-size: 16pt; font-weight: bold;">สิ่งที่ส่งมาด้วย</td><td style="width: 82%; vertical-align: top; border: none; font-size: 16pt;">${attach}</td></tr>
+                    </table>`;
+            }
+
+            let p1HTML = '';
             textParagraphs.forEach(p => {
-                mainContentHTML += `<p class="font-size-16 thai-justify paragraph-indent" style="margin-top: 0in; margin-bottom: 6pt; text-align: justify; text-justify: inter-character; text-indent: 2.5cm; font-family: 'TH SarabunPSK'; font-size: 16pt; font-weight: normal; line-height: 1.25;">${p.text}</p>`;
+                p1HTML += `<p class="thai-justify" style="margin: 0 0 16pt 0; text-indent: 2.5cm; font-family: 'TH SarabunPSK'; font-size: 16pt; line-height: 1.25;">${p.text}</p>`;
             });
 
+            let signatureHTML = '';
             if (currentDocumentMode === 'internal') {
-                // โหมดหนังสือภายใน (บันทึกข้อความ) -> ลบเส้นคั่นและ Borders ออกทั้งหมด, คำหลัก (ส่วนงาน, ที่, เรื่อง, เรียน, โทร, โทรสาร, วันที่) เป็น 16pt ตัวหนา
-                return `
-                    <div class="cu-document-font text-black" style="font-family: 'TH SarabunPSK'; color: black; line-height: 1.25;">
-                        <div style="position: relative; width: 100%; min-height: 22mm; margin-bottom: 5mm;">
-                            <img src="${realChulaLogoUrl}" style="position: absolute; left: 0; bottom: 0; height: 18mm; width: auto; filter: grayscale(100%); display: block;" />
-                            <div class="font-size-29-bold" style="font-family: 'TH SarabunPSK'; font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 2mm;">บันทึกข้อความ</div>
-                        </div>
-
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none; text-align: left;">
-                                    <b style="font-weight: bold;">ส่วนงาน</b>&nbsp;&nbsp;${dept}
-                                </td>
-                                <td style="text-align: right; vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                                    <b style="font-weight: bold;">โทร.</b>&nbsp;${phone}&nbsp;&nbsp;<b style="font-weight: bold;">โทรสาร</b>&nbsp;${fax}
-                                </td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="width: 55%; vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                                    <b style="font-weight: bold;">ที่</b>&nbsp;&nbsp;${docId}
-                                </td>
-                                <td style="width: 45%; text-align: left; padding-left: 12mm; vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                                    <b style="font-weight: bold;">วันที่</b>&nbsp;&nbsp;${docDate}
-                                </td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;" colspan="2">
-                                    <b style="font-weight: bold;">เรื่อง</b>&nbsp;&nbsp;${subject}
-                                </td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: bottom; padding: 1px 0; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;" colspan="2">
-                                    <b style="font-weight: bold;">เรียน</b>&nbsp;&nbsp;${learn}
-                                </td>
-                            </tr>
-                        </table>
-
-                        <div style="margin-bottom: 25mm; min-height: 120mm; padding-top: 4mm;">
-                            ${mainContentHTML}
-                        </div>
-
-                        <table style="width: 100%; border-collapse: collapse; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                            <tr>
-                                <td style="width: 45%; border: none;"></td>
-                                <td style="width: 55%; text-align: center; border: none;">
-                                    <div style="height: 25px;"></div>
-                                    <p style="margin: 0; font-weight: normal; font-size: 16pt;">( ${signName} )</p>
-                                    <p style="margin: 4px 0 0 0; font-weight: normal; font-size: 16pt;">${signPosition}</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
+                signatureHTML = `
+                    <div style="margin-top: 60px; font-family: 'TH SarabunPSK'; color: black; float: right; width: 50%; text-align: center;">
+                        <p style="margin: 0; font-size: 16pt;">( ${signName} )</p>
+                        <p style="margin: 4px 0 0 0; font-size: 16pt;">${signPosition}</p>
+                    </div><div style="clear: both;"></div>`;
             } else {
-                // โหมดหนังสือภายนอก -> ตราพระเกี้ยวสีชมพูอยู่กึ่งกลางด้านบนสุด สูง 3 ซม. หัวฟอร์มเป็นตัวหนา 16pt ทั้งหมด
-                return `
-                    <div class="cu-document-font text-black" style="font-family: 'TH SarabunPSK'; color: black; line-height: 1.25;">
-                        <div style="width: 100%; text-align: center; margin-bottom: 8mm;">
-                            <img src="${realChulaLogoUrl}" style="height: 30mm; width: auto; margin: 0 auto; display: block;" />
+                signatureHTML = `
+                    <div style="margin-top: 60px; font-family: 'TH SarabunPSK'; color: black; float: right; width: 50%; text-align: left;">
+                        <p style="margin: 0 0 60px 0; font-size: 16pt;">ขอแสดงความนับถือ</p>
+                        <div style="text-align: center; width: 100%;">
+                            <p style="margin: 0; font-size: 16pt;">( ${signName} )</p>
+                            <p style="margin: 4px 0 0 0; font-size: 16pt;">${signPosition}</p>
                         </div>
+                    </div><div style="clear: both;"></div>
+                    <div style="margin-top: 40px; font-family: 'TH SarabunPSK'; color: black; text-align: left; font-size: 16pt; line-height: 1.2;">
+                        <p style="margin: 0;">${fDeptMain} ${fDeptSub}</p>
+                        <p style="margin: 0;">โทรศัพท์ ${phone} โทรสาร ${fax}</p>
+                        <p style="margin: 0; font-size: 15pt;">ไปรษณีย์อิเล็กทรอนิกส์ ${fEmail}</p>
+                    </div>`;
+            }
 
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                            <tr style="height: 26px;">
-                                <td style="width: 50%; vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                                    <b style="font-weight: bold;">ที่</b>&nbsp;&nbsp;${docId}
-                                </td>
-                                <td style="width: 50%; text-align: right; vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none; font-weight: normal;">
-                                    ${fDeptMain}<br>
-                                    <span style="font-size: 16pt;">${fDeptSub}</span>
-                                </td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="width: 50%; border: none;"></td>
-                                <td style="width: 50%; text-align: left; padding-left: 30mm; vertical-align: bottom; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                                    ${docDate}
-                                </td>
-                            </tr>
-                        </table>
+            page1.innerHTML = `
+                ${headerHTML}
+                <div style="margin-top: 6mm;">
+                    ${p1HTML}
+                </div>
+                ${signatureHTML}
+            `;
+            container.appendChild(page1);
 
-                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 6mm; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;">
-                            <tr style="height: 26px;">
-                                <td style="width: 18%; vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;"><b style="font-weight: bold;">เรื่อง</b></td>
-                                <td style="width: 82%; vertical-align: top; font-weight: normal; font-size: 16pt; border: none;">${subject}</td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;"><b style="font-weight: bold;">เรียน</b></td>
-                                <td style="vertical-align: top; font-weight: normal; font-size: 16pt; border: none;">${learn}</td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;"><b style="font-weight: bold;">อ้างถึง</b></td>
-                                <td style="vertical-align: top; font-weight: normal; font-size: 16pt; border: none;">${ref}</td>
-                            </tr>
-                            <tr style="height: 26px;">
-                                <td style="vertical-align: top; font-family: 'TH SarabunPSK'; font-size: 16pt; border: none;"><b style="font-weight: bold;">สิ่งที่ส่งมาด้วย</b></td>
-                                <td style="vertical-align: top; font-weight: normal; font-size: 16pt; border: none;">${attach}</td>
-                            </tr>
-                        </table>
-
-                        <div style="margin-bottom: 20mm; min-height: 100mm;">
-                            ${mainContentHTML}
-                        </div>
-
-                        <table style="width: 100%; border-collapse: collapse; font-family: 'TH SarabunPSK'; font-size: 16pt; margin-bottom: 20px; border: none;">
-                            <tr>
-                                <td style="width: 40%; border: none;"></td>
-                                <td style="width: 60%; text-align: left; padding-left: 20mm; border: none;">
-                                    <p style="margin: 0 0 30px 0; font-weight: normal; font-size: 16pt;">ขอแสดงความนับถือ</p>
-                                    <p style="margin: 0; text-align: center; font-weight: normal; font-size: 16pt;">( ${signName} )</p>
-                                    <p style="margin: 4px 0 0 0; text-align: center; font-weight: normal; font-size: 16pt;">${signPosition}</p>
-                                </td>
-                            </tr>
-                        </table>
-
-                        <div style="font-family: 'TH SarabunPSK'; font-size: 14pt; color: #111; margin-top: 25mm; line-height: 1.2;">
-                            <p style="margin: 0;">${fDeptSub}</p>
-                            <p style="margin: 0;">โทรศัพท์ ${fPhone} โทรสาร ${fFax}</p>
-                            <p style="margin: 0;">ไปรษณีย์อิเล็กทรอนิกส์ ${fEmail}</p>
-                        </div>
+            // คำนวณความสูงหน้าเพื่อจัดโครงสร้างหน้าล้น
+            const maxPageContentHeight = 960; 
+            if (page1.scrollHeight > maxPageContentHeight) {
+                page1.innerHTML = `
+                    ${headerHTML}
+                    <div style="margin-top: 6mm;">
+                        ${p1HTML}
                     </div>
                 `;
+                
+                let lastParaObj = textParagraphs[textParagraphs.length - 1];
+                let nextPageFirstParaText = lastParaObj ? lastParaObj.text.trim() : '';
+                
+                let p1RebuiltHTML = '';
+                for(let i=0; i < textParagraphs.length - 1; i++) {
+                    p1RebuiltHTML += `<p class="thai-justify" style="margin: 0 0 16pt 0; text-indent: 2.5cm; font-family: 'TH SarabunPSK'; font-size: 16pt; line-height: 1.25;">${textParagraphs[i].text}</p>`;
+                }
+                
+                let p2HTML = `<p class="thai-justify" style="margin: 0 0 16pt 0; text-indent: 2.5cm; font-family: 'TH SarabunPSK'; font-size: 16pt; line-height: 1.25;">${nextPageFirstParaText}</p>`;
+
+                let catchText = '/...';
+                if (nextPageFirstParaText.startsWith('จึงเรียนมาเพื่อโปรดพิจารณา') || 
+                    nextPageFirstParaText.startsWith('จึงเรียนมาเพื่อโปรดทราบ') || 
+                    nextPageFirstParaText.startsWith('จึงเรียนมาเพื่อทราบ') ||
+                    nextPageFirstParaText.startsWith('จึงเรียนมาเพื่อ') ||
+                    nextPageFirstParaText.startsWith('จึงเรียนมา')) {
+                    catchText = '/...จึงเรียนมา';
+                } else if(nextPageFirstParaText.length > 0) {
+                    catchText = '/...' + nextPageFirstParaText.substring(0, 8);
+                }
+
+                let catchwordHTML = `
+                    <div style="position: absolute; right: 20mm; bottom: 15mm; font-family: 'TH SarabunPSK'; font-size: 16pt; font-weight: normal; color: black;">
+                        ${catchText}
+                    </div>`;
+
+                page1.innerHTML = `
+                    ${headerHTML}
+                    <div style="margin-top: 6mm;">
+                        ${p1RebuiltHTML}
+                    </div>
+                    ${catchwordHTML}
+                `;
+
+                const page2 = document.createElement('div');
+                page2.className = 'a4-page';
+                page2.innerHTML = `
+                    <div style="text-align: center; width: 100%; font-family: 'TH SarabunPSK'; font-size: 16pt; margin-bottom: 8mm; color: black; font-weight: normal;">
+                        - 2 -
+                    </div>
+                    <div style="margin-top: 5mm;">
+                        ${p2HTML}
+                    </div>
+                    ${signatureHTML}
+                `;
+                container.appendChild(page2);
             }
         }
 
-        function processRealtimePreview() {
-            const previewArea = document.getElementById('preview-area');
-            previewArea.innerHTML = generateDocumentHTML(false);
+        function getRawHTMLString() {
+            return document.getElementById('preview-container').innerHTML;
         }
 
-        // ล็อกขนาดและมิติกระดาษตอนแปลงเป็น PDF ให้คงสัดส่วน (ซ้าย 3 ซม. ขวา 2 ซม.) ไม่ให้ตัวอักษรเลื่อน
-        function triggerExportPDF() {
-            const filenameInput = document.getElementById('file-name-input').value || 'document';
-            
-            const wrapper = document.createElement('div');
-            wrapper.style.width = '210mm';
-            wrapper.style.minHeight = '297mm';
-            wrapper.style.paddingTop = '25mm';
-            wrapper.style.paddingBottom = '25mm';
-            wrapper.style.paddingLeft = '30mm';
-            wrapper.style.paddingRight = '20mm';
-            wrapper.style.backgroundColor = 'white';
-            wrapper.style.boxSizing = 'border-box';
-            wrapper.style.position = 'absolute';
-            wrapper.style.left = '-9999px';
-            wrapper.innerHTML = generateDocumentHTML(true);
-            document.body.appendChild(wrapper);
-
-            const opt = {
-                margin:       [0, 0, 0, 0], 
-                filename:     `${filenameInput}.pdf`,
-                image:        { type: 'jpeg', quality: 1.0 },
-                html2canvas:  { scale: 3, useCORS: true, letterRendering: true },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            };
-
-            html2pdf().set(opt).from(wrapper).save().then(() => {
-                document.body.removeChild(wrapper);
-            });
-        }
-
-        // ฝังรูปแบบโครงสร้างสำหรับ MS Word โดยเฉพาะ ล็อกกั้นขอบซ้าย 3 ซม. (1.18in) ขวา 2 ซม. (0.78in)
         function triggerExportWord() {
             const filenameInput = document.getElementById('file-name-input').value || 'document';
-            const innerCode = generateDocumentHTML(true);
+            const innerCode = getRawHTMLString();
             
-            const wordRawTemplate = `<!DOCTYPE html>
-            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            const wordRawTemplate = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
-            <meta charset='utf-8'>
-            <title>Chulalongkorn Document</title>
+            <meta charset="utf-8">
+            <title>Export Word</title>
             <style>
                 @page Section1 {
-                    size: 8.27in 11.69in;
-                    margin: 1.0in 0.78in 1.0in 1.18in; 
-                    mso-header-margin: 0.5in;
-                    mso-footer-margin: 0.5in;
-                    mso-paper-source: 0;
+                    size: 210mm 297mm;
+                    margin: 25mm 20mm 20mm 30mm;
+                    mso-header-margin: 36pt;
+                    mso-footer-margin: 36pt;
                 }
                 div.Section1 { page: Section1; }
-                body {
-                    font-family: 'TH SarabunPSK', 'Sarabun', sans-serif;
-                    font-size: 16pt;
-                    color: black;
-                }
-                p, span, td, div, b {
-                    font-family: 'TH SarabunPSK', 'Sarabun', sans-serif !important;
-                }
-                p {
-                    margin: 0in;
-                    margin-bottom: .0001pt;
-                    text-align: justify;
-                    text-justify: inter-character;
-                    line-height: 1.25;
-                    font-size: 16pt;
-                }
-                .font-size-16 { font-size: 16pt !important; font-weight: normal !important; }
-                .font-size-16-bold { font-size: 16pt !important; font-weight: bold !important; }
-                .font-size-29-bold { font-size: 29pt !important; font-weight: bold !important; }
-                .paragraph-indent { text-indent: 2.5cm !important; }
+                body { font-family: 'TH SarabunPSK', 'Angsana New', sans-serif !important; }
+                p { margin: 0in 0in 16pt 0in; text-align: justify; text-justify: inter-character; line-height: 1.25; white-space: pre-wrap; word-break: break-all; }
+                .a4-page { page-break-after: always; position: relative; }
             </style>
             </head>
             <body>
@@ -525,10 +502,7 @@
             </body>
             </html>`;
             
-            const blobData = new Blob(['\ufeff' + wordRawTemplate], {
-                type: 'application/msword;charset=utf-8'
-            });
-            
+            const blobData = new Blob(['\ufeff' + wordRawTemplate], { type: 'application/msword;charset=utf-8' });
             const blobUrl = URL.createObjectURL(blobData);
             const anchor = document.createElement('a');
             anchor.href = blobUrl;
@@ -536,6 +510,20 @@
             document.body.appendChild(anchor);
             anchor.click();
             document.body.removeChild(anchor);
+        }
+
+        function triggerExportPDF() {
+            const filenameInput = document.getElementById('file-name-input').value || 'document';
+            const element = document.getElementById('preview-container');
+            
+            const opt = {
+                margin:       [0, 0, 0, 0], 
+                filename:     `${filenameInput}.pdf`,
+                image:        { type: 'jpeg', quality: 1.0 },
+                html2canvas:  { scale: 2, useCORS: true, allowTaint: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
         }
 
         buildParagraphControls();
