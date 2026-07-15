@@ -226,9 +226,36 @@
     </main>
 
     <script>
-        // 🔗 โลโก้ที่ดึงมาจากฐานข้อมูลส่วนกลาง Supabase ของคุณ
+        // 🔗 ลิงก์รูปภาพจาก Supabase ของคุณ (เมื่อแก้ไขใน Supabase หน้าเว็บจะเปลี่ยนตามทันที)
         const logoBlackUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/Logoblack.png";
         const logoColorUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/logocolor.png";
+
+        // ตัวแปรสำหรับเก็บไฟล์ภาพแบบ Blob ชั่วคราวเพื่อป้องกัน CORS ตอนดาวน์โหลด
+        let blobLogoBlack = "";
+        let blobLogoColor = "";
+
+        // ฟังก์ชันโหลดรูปภาพล่วงหน้าแปลงเป็น Blob เพื่อแก้ปัญหาภาพหายตอนเซฟไฟล์
+        async function preloadLogosAsBlobs() {
+            try {
+                const [resBlack, resColor] = await Promise.all([
+                    fetch(logoBlackUrl),
+                    fetch(logoColorUrl)
+                ]);
+                const [blobB, blobC] = await Promise.all([
+                    resBlack.blob(),
+                    resColor.blob()
+                ]);
+                blobLogoBlack = URL.createObjectURL(blobB);
+                blobLogoColor = URL.createObjectURL(blobC);
+                // เมื่อโหลดเสร็จให้เรนเดอร์หน้าจออีกครั้ง
+                processRealtimePreview();
+            } catch (error) {
+                console.error("ไม่สามารถโหลดโลโก้ล่วงหน้าได้เนื่องจากสิทธิ์ความปลอดภัย:", error);
+                // หากดึงแบบตรงๆ ไม่ได้ ให้ใช้ URL ปกติสำรองไว้ก่อน
+                blobLogoBlack = logoBlackUrl;
+                blobLogoColor = logoColorUrl;
+            }
+        }
 
         let currentDocumentMode = 'internal'; 
 
@@ -336,12 +363,15 @@
                     </tr>`;
             }
 
+            // เลือกรูปภาพที่แปลงสิทธิ์ผ่านระบบ Blob แล้ว
+            const targetBlackImg = blobLogoBlack || logoBlackUrl;
+            const targetColorImg = blobLogoColor || logoColorUrl;
+
             let headerHTML = '';
             if (currentDocumentMode === 'internal') {
-                // บันทึกข้อความ (ภายใน) ใช้โลโก้ดำตามสเปคเดิม
                 headerHTML = `
                     <div style="position: relative; width: 100%; height: 2.0cm; margin-bottom: 5mm;">
-                        <img src="${logoBlackUrl}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
+                        <img src="${targetBlackImg}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
                         <div style="font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 1mm;">บันทึกข้อความ</div>
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
@@ -359,10 +389,9 @@
                         ${throughRowHTML}
                     </table>`;
             } else {
-                // หนังสือภายนอก ใช้โลโก้สีตั้งตรงกลางเด่นชัด
                 headerHTML = `
                     <div style="width: 100%; text-align: center; margin-bottom: 5mm;">
-                        <img src="${logoColorUrl}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
+                        <img src="${targetColorImg}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-family: 'TH SarabunPSK'; border: none;">
                         <tr><td style="width: 50%; vertical-align: top; border: none; font-size: 16pt;"><span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;<span style="font-weight: normal;">${docId}</span></td><td style="width: 50%; text-align: right; vertical-align: top; border: none; font-size: 16pt;">จุฬาลงกรณ์มหาวิทยาลัย<br>ถนนพญาไท กทม. 10330</td></tr>
@@ -528,7 +557,7 @@
                     </table>
                     <br/><br/>
                     <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">${fDeptMain} ${fDeptSub}</p>
-                    <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">โทรศัพท์ ${phone} โทรสาร ${fax}</p>
+                    <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">โทรศัพท์ ${phone} โทยสาร ${fax}</p>
                     <p style="font-family:'TH SarabunPSK';font-size:15pt;line-height:1.2;margin:0;">ไปรษณีย์อิเล็กทรอนิกส์ ${fEmail}</p>
                 `;
             }
@@ -579,6 +608,8 @@
             html2pdf().set(opt).from(element).save();
         }
 
+        // เริ่มต้นดาวน์โหลดภาพล่วงหน้าเพื่อเคลียร์สิทธิ์ความปลอดภัย CORS
+        preloadLogosAsBlobs();
         buildParagraphControls();
         changeMode('internal');
     </script>
