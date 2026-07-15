@@ -226,41 +226,14 @@
     </main>
 
     <script>
-        // 🔗 ลิงก์รูปภาพจาก Supabase ของคุณ (เมื่อแก้ไขใน Supabase หน้าเว็บจะเปลี่ยนตามทันที)
+        // 🔗 ลิงก์รูปภาพตรงๆ จาก Supabase ส่วนกลางของคุณ
         const logoBlackUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/Logoblack.png";
         const logoColorUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/logocolor.png";
-
-        // ตัวแปรสำหรับเก็บไฟล์ภาพแบบ Blob ชั่วคราวเพื่อป้องกัน CORS ตอนดาวน์โหลด
-        let blobLogoBlack = "";
-        let blobLogoColor = "";
-
-        // ฟังก์ชันโหลดรูปภาพล่วงหน้าแปลงเป็น Blob เพื่อแก้ปัญหาภาพหายตอนเซฟไฟล์
-        async function preloadLogosAsBlobs() {
-            try {
-                const [resBlack, resColor] = await Promise.all([
-                    fetch(logoBlackUrl),
-                    fetch(logoColorUrl)
-                ]);
-                const [blobB, blobC] = await Promise.all([
-                    resBlack.blob(),
-                    resColor.blob()
-                ]);
-                blobLogoBlack = URL.createObjectURL(blobB);
-                blobLogoColor = URL.createObjectURL(blobC);
-                // เมื่อโหลดเสร็จให้เรนเดอร์หน้าจออีกครั้ง
-                processRealtimePreview();
-            } catch (error) {
-                console.error("ไม่สามารถโหลดโลโก้ล่วงหน้าได้เนื่องจากสิทธิ์ความปลอดภัย:", error);
-                // หากดึงแบบตรงๆ ไม่ได้ ให้ใช้ URL ปกติสำรองไว้ก่อน
-                blobLogoBlack = logoBlackUrl;
-                blobLogoColor = logoColorUrl;
-            }
-        }
 
         let currentDocumentMode = 'internal'; 
 
         let textParagraphs = [
-            { label: 'ย่อหน้าที่ 1', text: 'ด้วย บริษัท สคูลดิโอ จำกัด ได้จัดโครงการอบรมเชิงปฏิบัติการ หลักสูตร AI Automation Transformation รุ่นที่ 3 ในรูปแบบการเรียนออนไลน์ควบคู่กับการจัด Workshop เชิงปฏิบัติการ ณ สถานที่ของบริษัท สคูลดิโอ จำกัด โดยเรียนออนไลน์ตั้งแต่วันที่ 4 กรกฎาคม 2569 และเข้าร่วม Workshop เชิงปฏิบัติการในวันเสาร์ที่ 11 กรกฎาคม 2569 วันเสาร์ที่ 18 กรกฎาคม 2569 และวันเสาร์ที่ 26 กรกฎาคม 2569 วัตถุประสงค์เพื่อเสริมสร้างความรู้และทักษะด้านการออกแบบและพัฒนาระบบ AI Automation เพื่อนำมาประยุกต์ใช้ในกระบวนการทำงานขององค์กร อันจะช่วยเพิ่มประสิทธิภาพในการทำงาน ลดระยะเวลาในการดำเนินงาน และลดโอกาสการเกิดข้อผิดพลาดจากการปฏิบัติงานของบุคลากร' },
+            { label: 'ย่อหน้าที่ 1', text: 'ด้วย บริษัท สคูลดิโอ จำกัด ได้จัดโครงการอบรมเชิงปฏิบัติการ หลักสูตร AI Automation Transformation รุ่นที่ 3 ในรูปแบบการเรียนออนไลน์ควบคู่กับการจัด Workshop เชิงปฏิบัติการ ณ สถานที่ของบริษัท สคูลดิโอ จำกัด โดยเรียนออนไลน์ตั้งแต่วันที่ 4 กรกฎาคม 2569 และเข้าร่วม Workshop เชิงปฏิบัติการในวันเสาร์ที่ 11 กรกฎาคม 2569 วันเสาร์ที่ 18 กรกฎาคม 2569 และวันเสาร์ที่ 26 กรกฎาคม 2569 วัตถุประสงค์เพื่อเสริมสร้างความรู้และทักษะด้านการออกแบบและพัฒนาระบบ AI Automation เพื่อนำมาประยุก้ใช้ในกระบวนการทำงานขององค์กร อันจะช่วยเพิ่มประสิทธิภาพในการทำงาน ลดระยะเวลาในการดำเนินงาน และลดโอกาสการเกิดข้อผิดพลาดจากการปฏิบัติงานของบุคลากร' },
             { label: 'ย่อหน้าที่ 2', text: 'โครงการดังกล่าวมุ่งเน้นการพัฒนาความรู้ความเข้าใจด้าน AI Automation และ Workflow Automation เพื่อให้บุคลากรสามารถวิเคราะห์และคัดเลือกกระบวนการทำงานที่เหมาะสมในการนำเทคโนโลยี AI มาใช้งาน ตลอดจนสามารถสร้างต้นแบบของระบบ Automation ที่สามารถนำไปใช้งานจริงภายในหน่วยงาน และยกระดับทักษะของบุคลากรให้สอดคล้องและรองรับการเปลี่ยนแปลงด้านเทคโนโลยีและนโยบายดิจิทัลขององค์กร (รายละเอียดตามเอกสารแนบ)' },
             { label: 'ย่อหน้าที่ 3', text: 'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติจัดตั้งโครงการและงบประมาณสนับสนุนดังกล่าวด้วย จะเป็นพระคุณยิ่ง' }
         ];
@@ -363,15 +336,13 @@
                     </tr>`;
             }
 
-            // เลือกรูปภาพที่แปลงสิทธิ์ผ่านระบบ Blob แล้ว
-            const targetBlackImg = blobLogoBlack || logoBlackUrl;
-            const targetColorImg = blobLogoColor || logoColorUrl;
+            const currentLogo = currentDocumentMode === 'internal' ? logoBlackUrl : logoColorUrl;
 
             let headerHTML = '';
             if (currentDocumentMode === 'internal') {
                 headerHTML = `
                     <div style="position: relative; width: 100%; height: 2.0cm; margin-bottom: 5mm;">
-                        <img src="${targetBlackImg}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
+                        <img src="${currentLogo}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
                         <div style="font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 1mm;">บันทึกข้อความ</div>
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
@@ -391,7 +362,7 @@
             } else {
                 headerHTML = `
                     <div style="width: 100%; text-align: center; margin-bottom: 5mm;">
-                        <img src="${targetColorImg}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
+                        <img src="${currentLogo}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-family: 'TH SarabunPSK'; border: none;">
                         <tr><td style="width: 50%; vertical-align: top; border: none; font-size: 16pt;"><span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;<span style="font-weight: normal;">${docId}</span></td><td style="width: 50%; text-align: right; vertical-align: top; border: none; font-size: 16pt;">จุฬาลงกรณ์มหาวิทยาลัย<br>ถนนพญาไท กทม. 10330</td></tr>
@@ -464,6 +435,9 @@
             const fDeptSub = document.getElementById('footer-dept-sub').value;
             const fEmail = document.getElementById('footer-email').value;
 
+            // ดึงจาก Supabase URL ตรงๆ 100% ไม่มี Base64 ปน
+            const currentLogoUrl = currentDocumentMode === 'internal' ? logoBlackUrl : logoColorUrl;
+
             let wordContent = '';
 
             if (currentDocumentMode === 'internal') {
@@ -473,9 +447,13 @@
                                    <td width="85%" style="font-family:'TH SarabunPSK';font-size:16pt;vertical-align:top;">${through}</td></tr>`;
                 }
                 wordContent = `
-                    <p align="center" style="text-align:center;margin-bottom:20pt;">
-                        <font size="6" face="TH SarabunPSK"><b>บันทึกข้อความ</b></font>
-                    </p>
+                    <div style="position:relative; width:100%; margin-bottom:10pt;">
+                        <img src="${currentLogoUrl}" width="68" height="68" style="float:left; margin-right:15pt;"/>
+                        <p align="center" style="text-align:center; margin-top:15pt;">
+                            <font size="6" face="TH SarabunPSK"><b>บันทึกข้อความ</b></font>
+                        </p>
+                        <div style="clear:both;"></div>
+                    </div>
                     <table border="0" cellspacing="0" cellpadding="2" width="100%">
                         <tr>
                             <td colspan="2" style="font-family:'TH SarabunPSK';font-size:16pt;">
@@ -498,6 +476,9 @@
                 `;
             } else {
                 wordContent = `
+                    <div align="center" style="text-align:center; margin-bottom:15pt;">
+                        <img src="${currentLogoUrl}" width="113" height="113"/>
+                    </div>
                     <table border="0" cellspacing="0" cellpadding="2" width="100%">
                         <tr>
                             <td width="50%" style="font-family:'TH SarabunPSK';font-size:16pt;vertical-align:top;"><b>ที่</b> ${docId}</td>
@@ -557,11 +538,12 @@
                     </table>
                     <br/><br/>
                     <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">${fDeptMain} ${fDeptSub}</p>
-                    <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">โทรศัพท์ ${phone} โทยสาร ${fax}</p>
+                    <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">โทรศัพท์ ${phone} โทรสาร ${fax}</p>
                     <p style="font-family:'TH SarabunPSK';font-size:15pt;line-height:1.2;margin:0;">ไปรษณีย์อิเล็กทรอนิกส์ ${fEmail}</p>
                 `;
             }
 
+            // เพิ่มโครงสร้าง XML เพื่อบังคับให้ Microsoft Word เปิดสิทธิ์ดึงข้อมูลภาพผ่านเน็ต (Supabase) ตรงๆ
             const wordRawTemplate = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
             <head>
             <meta charset="utf-8">
@@ -608,8 +590,6 @@
             html2pdf().set(opt).from(element).save();
         }
 
-        // เริ่มต้นดาวน์โหลดภาพล่วงหน้าเพื่อเคลียร์สิทธิ์ความปลอดภัย CORS
-        preloadLogosAsBlobs();
         buildParagraphControls();
         changeMode('internal');
     </script>
