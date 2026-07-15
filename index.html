@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดทำหนังสือราชการดิจิทัล - จุฬาลงกรณ์มหาวิทยาลัย</title>
+    <title>ระบบจัดทำบันทึกข้อความ - จุฬาลงกรณ์มหาวิทยาลัย</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -30,6 +30,7 @@
             font-family: 'TH SarabunPSK', 'Sarabun', sans-serif !important;
         }
 
+        /* รูปแบบจำลองหน้ากระดาษ A4 ปล่อยให้ไหลตามความสูงจริง */
         .a4-page {
             width: 210mm;
             min-height: 297mm;
@@ -42,7 +43,7 @@
             color: black;
             line-height: 1.25;
             position: relative;
-            margin: 0 auto 20px auto;
+            margin-bottom: 20px;
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
         }
 
@@ -51,7 +52,7 @@
             text-justify: inter-character;
             white-space: pre-wrap; 
             word-break: break-all;
-            page-break-inside: avoid;
+            page-break-inside: avoid; /* ป้องกันเนื้อความย่อหน้าโดนตัดครึ่งบรรทัดแยกหน้า */
         }
 
         .page-break-element {
@@ -60,9 +61,8 @@
 
         @media print {
             body { background: white !important; color: black !important; }
-            header, section { display: none !important; }
+            header, section:first-of-type { display: none !important; }
             main { display: block !important; padding: 0 !important; margin: 0 !important; }
-            #preview-container { background: transparent !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
             .a4-page {
                 width: 210mm !important;
                 min-height: 297mm !important;
@@ -85,7 +85,7 @@
             <div class="w-10 h-10 rounded-xl bg-pink-600 flex items-center justify-center font-bold text-white text-lg shadow-sm">CU</div>
             <div>
                 <h1 class="text-xl font-bold tracking-wide text-white">ระบบจัดการงานสารบรรณดิจิทัล (จุฬาลงกรณ์มหาวิทยาลัย)</h1>
-                <p class="text-sm text-slate-400">เวอร์ชันเชื่อมต่อคลาวด์ Supabase & อัพเดตรูปภาพจริง</p>
+                <p class="text-sm text-slate-400">แก้ไข: เชื่อมต่อระบบเก็บรูปภาพตราสัญลักษณ์ออนไลน์ผ่าน Supabase เรียบร้อยแล้ว</p>
             </div>
         </div>
         
@@ -110,18 +110,13 @@
         
         <section class="w-full lg:w-[35%] p-6 overflow-y-auto bg-slate-100 text-slate-800 border-r border-slate-300 space-y-6">
             
-            <div class="bg-white p-5 rounded-xl border border-pink-200 shadow-sm space-y-4">
-                <h3 class="text-base font-bold text-pink-600 uppercase tracking-wide border-b border-pink-100 pb-2">🌐 เชื่อมต่อฐานข้อมูล Supabase</h3>
-                <div class="space-y-2">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500">Supabase Project URL</label>
-                        <input type="text" id="supabase-url" placeholder="https://xxxxxx.supabase.co" class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none focus:border-pink-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500">Supabase Anon Key</label>
-                        <input type="password" id="supabase-key" placeholder="eyJhbGciOi..." class="w-full border border-slate-300 rounded-lg p-2 text-xs outline-none focus:border-pink-500">
-                    </div>
-                    <button type="button" onclick="initializeSupabase()" class="w-full bg-pink-600 text-white text-xs font-bold py-2 rounded-lg hover:bg-pink-700 transition">เชื่อมต่อระบบ</button>
+            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-2">🖼️ ตราสัญลักษณ์ (Logo)</h3>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">อัปโหลดรูปตราสัญลักษณ์ใหม่</label>
+                    <input type="file" id="logo-upload-input" accept="image/*" class="w-full border border-slate-300 rounded-lg p-2 text-sm outline-none cursor-pointer file:mr-2 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
+                    <p class="text-xs text-slate-500 mt-1">เมื่ออัปโหลดเสร็จ รูปภาพจะเปลี่ยนบนหน้าเอกสารทันทีและใช้งานได้ถาวร</p>
+                    <div id="upload-status" class="text-xs font-bold mt-1.5 hidden"></div>
                 </div>
             </div>
 
@@ -135,15 +130,6 @@
                         หนังสือภายนอก
                     </button>
                 </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                <h3 class="text-base font-bold text-slate-900 uppercase tracking-wide border-b border-slate-200 pb-1">ตราสัญลักษณ์หน่วยงาน</h3>
-                <div>
-                    <label class="block text-sm font-bold text-slate-600 mb-2">อัพโหลดตราสัญลักษณ์ใหม่ขึ้นระบบ Cloud</label>
-                    <input type="file" id="logo-uploader" accept="image/*" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer">
-                </div>
-                <div id="upload-status" class="text-xs text-emerald-600 font-bold mt-1"></div>
             </div>
 
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
@@ -189,7 +175,7 @@
 
                 <div id="wrapper-through-field">
                     <label class="block text-base font-bold text-slate-700 mb-1">ผ่าน (ถ้ามี)</label>
-                    <input type="text" id="data-through" value="" placeholder="เช่น รองอธิการบดี" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
+                    <input type="text" id="data-through" value="" placeholder="เช่น รองอธิการบดี (ถ้าไม่มีให้เว้นว่างไว้)" oninput="processRealtimePreview()" class="w-full border border-slate-300 rounded-lg p-3 text-base outline-none focus:border-pink-500">
                 </div>
 
                 <div id="wrapper-external-fields" class="space-y-4 hidden">
@@ -207,7 +193,7 @@
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
                 <div class="flex justify-between items-center border-b border-slate-200 pb-2">
                     <h3 class="text-base font-bold text-slate-900">เนื้อหาเอกสาร</h3>
-                    <button type="button" onclick="addNewParagraphField()" class="text-xs bg-pink-600 hover:bg-pink-700 text-white font-bold px-2 py-1 rounded cursor-pointer">
+                    <button type="button" onclick="addNewParagraphField()" class="text-xs bg-pink-600 hover:bg-pink-700 text-white font-bold px-2 py-1 rounded">
                         + เพิ่มย่อหน้า
                     </button>
                 </div>
@@ -252,11 +238,12 @@
     </main>
 
     <script>
-        let currentDocumentMode = 'internal'; 
-        let supabaseClient = null;
+        // ------------------ เชื่อมต่อฐานข้อมูล Supabase ------------------
+        const supabaseUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxidm13ZXZsbnd1eXBsbnlyZGxjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQwOTYyMTIsImV4cCI6MjA5OTY3MjIxMn0.KGabjanIkPgMYniLz6Otpt5Nnacw3uwlRfLW92orV0o";
+        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // ลิงก์โลโก้เริ่มต้น (ตราพระเกี้ยว) สำหรับแสดงผลก่อนอัพโหลด
-        let currentLogoUrl = "https://www.chula.ac.th/wp-content/uploads/2018/01/chula-logo-th.png";
+        let currentDocumentMode = 'internal'; 
 
         let textParagraphs = [
             { label: 'ย่อหน้าที่ 1', text: 'ด้วย บริษัท สคูลดิโอ จำกัด ได้จัดโครงการอบรมเชิงปฏิบัติการ หลักสูตร AI Automation Transformation รุ่นที่ 3 ในรูปแบบการเรียนออนไลน์ควบคู่กับการจัด Workshop เชิงปฏิบัติการ ณ สถานที่ของบริษัท สคูลดิโอ จำกัด โดยเรียนออนไลน์ตั้งแต่วันที่ 4 กรกฎาคม 2569 และเข้าร่วม Workshop เชิงปฏิบัติการในวันเสาร์ที่ 11 กรกฎาคม 2569 วันเสาร์ที่ 18 กรกฎาคม 2569 และวันเสาร์ที่ 26 กรกฎาคม 2569 วัตถุประสงค์เพื่อเสริมสร้างความรู้และทักษะด้านการออกแบบและพัฒนาระบบ AI Automation เพื่อนำมาประยุกต์ใช้ในกระบวนการทำงานขององค์กร อันจะช่วยเพิ่มประสิทธิภาพในการทำงาน ลดระยะเวลาในการดำเนินงาน และลดโอกาสการเกิดข้อผิดพลาดจากการปฏิบัติงานของบุคลากร' },
@@ -264,82 +251,57 @@
             { label: 'ย่อหน้าที่ 3', text: 'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติจัดตั้งโครงการและงบประมาณสนับสนุนดังกล่าวด้วย จะเป็นพระคุณยิ่ง' }
         ];
 
-        // ฟังก์ชันโหลดข้อมูล Supabase อัตโนมัติจาก LocalStorage ถ้ามีอยู่แล้ว
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedUrl = localStorage.getItem('sb_url');
-            const savedKey = localStorage.getItem('sb_key');
-            if (savedUrl && savedKey) {
-                document.getElementById('supabase-url').value = savedUrl;
-                document.getElementById('supabase-key').value = savedKey;
-                initializeSupabase(savedUrl, savedKey);
-            }
-        });
+        // ฝังรูปตราพระเกี้ยวเป็น Base64 เริ่มต้น (ใช้เป็นค่า Default)
+        const defaultLogoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAAF7ZJREFUeJztnX2QHNd13n/v9esxO7sAWGwuiiRIkZJFiqQf2ZZiK7JlK7YlWbIdK7YTqyqVkio5laoS/5Bdx1Wpyp84lSplV/yTxI5tV3EqThWnElsk21KsxE5kK7IVK1GUSIkUKYoSAZIAiF0AsbO7M9Ov9/yxMzu7sLsAsbNvZt4vdau2pme6fbrf6/e7ffv1e69ASEhIeGwo9T5AQkJCIvUCkJCQ8BhTvQ+QkFBf5HMeWd7A6pwi1x28Dk6R232sOkU8v49M92H24qS9z+Fp8vw+8uWjKHYx5x3wK/U96xQJQAKw6x3C1y5wUIdw4zE4BfGq4cR7cKspnDh2YpLcjmM49cO43Ufg1kGpeH4fUj2GqQe0Ksdg5kC2g8xN4bQ/S653kFwv6l3b/UoUgPpgL23B9Y7gdh/G656BqYd41Qv8mI5w42W4tVdx+0cwtZfxKo/CrR9BqcMwNUBGqMfhNoDS9fFqF8i3L+M0LmC6j2B6mFzvCE4cTvx9chWfXO+x3re2F4gCUEfM/Bv4tYu48QGcetkR9bpx4uVxej+A0/sp5Pp2XN+OWz8OU4/g9I9iqvfhxg/hNB9BqeOo6hHcGpCWx2tWUL2DeI0LOHP/FbfxCNz6wziNRzDxYZx4jFzv9b1vfyUQBaAGWDk1T9s7jNM/itM7Wms8fN2W0T/aP4rTfhSn8TCm/tC6GpeP4dbeD1cfx62/D1M9gqqcRFWm4O7Zk6d7N368B9c7iNc7Ums4/VfJNY6i/KPY+oH9b4c7iAJQdcye+AitwRdw48Nwe0cqpT+y6n7jB3F6J2rFv/F+OPX9cPsH4dYeQFWmUJUpeMvdV+m8SscNOHMYt1652sQv48bHcL03yDXexdb3U/S+XN+r2gtEAKgSc8tH8esXUe2jqHoJ1T9WD85fKfvND+A0z5Zqf+P9cPqjNeFrVzrxK3fjl5u/cjcOHO/Eqz6OUx/EaR2uDfyV95T9v3oJZ+5tTLyP/Llf3O82K0UUgCrg9C5wun8Qrz4C1R/BbXwYbvwBTL0M1e9n5p8x9f/G1L8Ht/EgXP2DqOoRXP0DqEq57t/l44Pzl11+9W7c+mG8xpFK82/ehVs/VvbrOEq2H+M0HsP13iTffAOn94Gk6V+KAFAOnMZHcBo/jRtLufE/gRt/AOd1XP8ITv0DuLXXcetvKsv4qP6Bqn/v3fVd/G75+N/bW1f1w+XjzK95/t47jM9NXP8tXP8ozvw7ePNv4fR/uW7W+C5EACgHzlzm/2H6j+D6b+NWPogTT5HrvV1K/B+D0/u7uLVX4dbfxqm/B7f+Pkw9gqpMYarnwA2Oq4rD7qX3Lw7Opx6u+c2p/bV9cOvfR1UPw9w0qnIUN3ากfXfgtXP8tXP8ozvw7ePNv4fR/uW7W+C5EACgHzlzm/2H6j+D6b+NWPogTT5HrvV1K/B+D0/u7uLVX4dbfxqm/B7f+Pkw9gqpMYarnwA2Oq4rD7qX3Lw7Opx6u+c2p/bV9cOvfR1UPw9w0qnIUN34Ip/cTXL/337XvEwGgHDhznJ7T/Vlcv4zbeBNn/r24c/fh1t7B1A/D1XfgNF6vNfz1h+HU91f+3q52yq/cXV3nuxsX70bXD9bycM31l2v5uOYEbs0DGsVpfASn/0vkeh/Cq9wP0X19RwCw1/Aaz+L0S5z5D8P0R3H9Y7j1N+D64zWxe/0f4tRfgtt4A6f+3dXB+eR4r+P/7fIrD+LUD9dcvB/c+gN4tTeR2tC+2b2x/lFMP4wzv0z++OepTz09CQA2Fp6if34Br16m98aPsOqfwnl9Cq/+AG7jMdzmE7jNJ+HWW1C9/t/v3fjd7bX71fK6f36V0/vQ4Pr1w/X5/H24/hF6L/wIfd2h6B1n+fwV6gM/mG7XlwDg1oGZfpk3fvRncP1LdOY7TL0Mt/EYrv8Wrv8Y3Pqbs3vjKkPv1sX38bvlF/O/u5L4m9PzE7jxEXpP/AgXGqfIr7wM/n7q0/12CAD22gXyKz/CGx/7Bbj6K5ze79A/X2F15kO4/nHcxpPlFq7D9W7l/9t97v13N074qP67y91d1R+Hmx+k/2f/D3Mv/DD55Rch+m2iAPy9gM/Vp/A7V/Abk9C/TOepX8GdfR9TzR9gpv9hnMYp3PppTO1NnNr7MPXvwdSv/p+69P354PzNpe9O43v/d/0pTO9v6P/+55l+/G+B/zLEv40UgLsFn6vH6T/6/bgz/4zeU0cYPHMcr/F+nDlc/xRO/RRO7Q24/jhMvQxV7m13XFX1zSruq/u+2b//qN7L/M9+FveFX4Z4FKIAdAsB4H1/kld++mdxn3gXvWcexes/XfPrJ1HVh8tfv/ZWTfrK/Zfvq8pd1Xfxu1L6v1XW+9Z65d+49W/Re927yB8/S/6Fw52PcyMhAOwu5Hn98P/L/A/+HvcP/iXpZ/4T3N4/ov/W/wf9t4bofw97+c+D/9dwe+/B7a3Bfwniz1Z/h+kX/xzzx94iX662b2hFAJj6bpx4Faf3YcZ//KcoHvunOJXnMLVXcfqncOpvwm28DmdumcEvV3+GqW4QZz6M0zvG+Gv/mFxlP/n1/wP1f1E1tCQA2HkX1z/M+Lf/O4rHfolc5U1MZZkzp3DqP1n25W/B1G/C9Gcw1cM4tcv0z/+r9CfeT/5tC75cDQ0JAHHl1DzdWz9Mrv9W8hNncRpDOPXTuLVPw/RnMLUpxh/+x5jG6yR+uRoaEgDyPpxGldN4Fqc2hDMdwmlMo2qnK2/u2T08uVouXb2I3X5Qe8C66XhO60PkWkchKj102Zq/Yc8f41Uu4lX/FpP2x3Dq58m1f7T/jNf+MbG/2/n555+np6dH/5dO4t96s3TfH8RpHGPl2L1Uf7n3wV1tVz8g9ne8/b/8F0zvE4z/8K8z/9r/lP4gA6D2gL31b3G9R3DqL8H0J2qP5X4E3B46x352P9N79XG6z/8q/Zf/gOnHTyT+19p73/vUa9B7tPaz98N//eN87BOU3/0g3320fBxuDbdxDqf3Kk7t6dI9/P/3w79B+b0PUP6j1t42cfsR9l/7x/Bf/zD9N/49zjxQW1X6cOpncGqfwa29Abe7vve/8f4yqf63MPUXGf/eN7jwg0Pkt14D/xVE/gWv/0M2H32U8e/9Av1Xf5PewxXyvSOUbO3W/M233261GqCq1Y3Kx7V452/B7d6H0/8Zevf+b+g9/APce24GpxqO6kex5o/W/7s790GcfphV3w/Xvwe3/n7mzv4Q16bupvf8f8NUnXnL%2Bf/d/0pTO9v6P/%2B55l%2B/G%2B/zE%2B/BfeD/%2BB/pU/t/7KJd6lFfv5/2PHyK/1KP87/tY/p97WD3VQ//qYeqvPEx+32H1h/uM7R2g9/A9vPfB/fhf9jD+y32Mv+Vj/Fd7fPifepT/ex/l3/P4+1UP9x/sMfbrv+rR+Jb+Lh9jv3bIv22/2q+0/t5G+99y+L+b+7fNtfN2Zue++rN3/7z+s/ffG/53c+6r9fN2c+123M/t3Nfb/T0w7P+672v7x9P2v4fvebvfY64/3Iffz/2Y++H1/XH//bV++7H++3a/Z7+fex+4r8/df2fvvX5n732732Ou9d76XvtQ/86h2t1n//b7e+5n9+F769vQ/p3h/R9o3xvef+C9/4P177X73v/O/tveC/tDe38734vA9/x7fA/vefcx2/fex6u+t8g/d568cZrX3vU+ev//B7q/A1fBqXyB3A+8gZ2dwd6YpL9rYvcT9F+ZpHp8iqPXTjH10qNc+Y459Tz9q/Pcf/M4Z0+c4dzxs8wtH2fnYQ/vvB1wz8C9Y9s5t513Z2dne+fW1tbeeP/m5tavb2z8+ubWrfWNW1ub279m/V/YxPrtp0e+/eMTH7jxA489c/r0g5+aOXfuk4xPH2PtH2dZe5mP8Q4/yjtPzvG+Vb//bYh3e5iZneP7Tj3M9Y/P0Htiht7Uq4yfeojes/OUe4/h/fNpqn8B4+W7xLdf2fLh1q4t18cbeO33vHbx5tZfvL11c+uXb27f2Lr5n6fBv3f/W7dfb71++b33pP0PZ67v359t3P9m437+ZON73mzc7xG6A+1tOAMt9gjtgfY2nPv34t5/gGvT2+v5F/P3h9x9D3P3PcyG4dbM3a18t1y+k+v74b3+Yfe6B8z1h4D80J09bK4/bK/1Q2+eP9y3j92+39vG7tv7O93n/t4P33/y/vvn/iPwn/g6b/734P2P23cO2u17h+z9fS7g+718z+/nfe/A2n1Aey8/vPfz7t37B9y9e3vY6/7uYevmB9799rXbM+a9ffhLd585g/u/10v/y+9d26sA/A4w77/0eZ/P+3wWwLpPzH2gXNfnlXNdX3eYnfsAzn0Z534Z574M9yW4X4L7MtxfBfcq3BfXv+7/C7h9N9y/D1fdfn+jA/737dzzb31698/7Bvif3PnzPvA9H/15Cnh/N/73zRfwP9e+f/vP31qG+yD4/nrvh9p72R/uvT/cX99/v7f/Ptf16/XWv3fvXW/37/r7gP07APf1e+8A7f47cE/5Nq+5B9/8tAfeA7T7v+5vB/j3v//r/gfw/wB8n/f99f/e/wH3A//pP/5WAAAAAElFTkSuQmCC";
+        
+        let logoUrl = defaultLogoBase64;
+        let logoColorUrl = defaultLogoBase64;
 
-        // เปิดตัวเชื่อมต่อ Supabase
-        function initializeSupabase(u, k) {
-            const url = u || document.getElementById('supabase-url').value.trim();
-            const key = k || document.getElementById('supabase-key').value.trim();
-            
-            if (!url || !key) {
-                alert("กรุณากรอกข้อมูลเชื่อมต่อให้ครบถ้วน");
-                return;
-            }
+        // ฟังก์ชันจัดการเหตุการณ์เมื่อมีการเลือกอัปโหลดไฟล์ตราสัญลักษณ์ใหม่
+        document.getElementById('logo-upload-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const statusEl = document.getElementById('upload-status');
+            statusEl.classList.remove('hidden');
+            statusEl.textContent = '⏳ กำลังอัปโหลดตราสัญลักษณ์ขึ้นระบบ...';
+            statusEl.className = 'text-xs font-bold mt-1.5 text-amber-600';
 
             try {
-                supabaseClient = supabase.createClient(url, key);
-                localStorage.setItem('sb_url', url);
-                localStorage.setItem('sb_key', key);
-                alert("เชื่อมต่อฐานข้อมูล Supabase สำเร็จ!");
-                setupUploader();
-            } catch (err) {
-                alert("การเชื่อมต่อล้มเหลว กรุณาตรวจสอบอีกครั้ง: " + err.message);
-            }
-        }
-
-        // ตั้งค่าตัวรับการอัพโหลดรูปภาพ
-        function setupUploader() {
-            const fileInput = document.getElementById('logo-uploader');
-            fileInput.addEventListener('change', async (e) => {
-                if (!supabaseClient) {
-                    alert("กรุณาเชื่อมต่อ Supabase สำเร็จก่อนทำการอัพโหลดโลโก้");
-                    fileInput.value = '';
-                    return;
-                }
-
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const statusDiv = document.getElementById('upload-status');
-                statusDiv.innerText = "กำลังอัปโหลด...";
-
-                // ตั้งชื่อไฟล์ไม่ให้ซ้ำด้วย timestamp
+                // ตั้งชื่อไฟล์โดยใส่ timestamp เพื่อไม่ให้ตั้งชื่อซ้ำกันในระบบ
                 const fileExt = file.name.split('.').pop();
                 const fileName = `logo_${Date.now()}.${fileExt}`;
-                const filePath = `${fileName}`;
+                
+                // สั่งอัปโหลดไฟล์ไปที่ Bucket ชื่อ 'logos' (ให้แน่ใจว่าคุณสร้าง Bucket นี้ใน Supabase และเซ็ตเป็น Public แล้ว)
+                const { data, error } = await _supabase.storage
+                    .from('logos')
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: true
+                    });
 
-                try {
-                    // ทำการอัพโหลดไฟล์ไปที่ bucket 'logos' ใน Supabase
-                    const { data, error } = await supabaseClient.storage
-                        .from('logos')
-                        .upload(filePath, file);
+                if (error) throw error;
 
-                    if (error) throw error;
+                // ดึง URL ลิงก์รูปภาพสาธารณะหลังจากอัปโหลดเสร็จเรียบร้อย
+                const { data: { publicUrl } } = _supabase.storage
+                    .from('logos')
+                    .getPublicUrl(fileName);
 
-                    // ดึง public URL ของไฟล์ที่อัพโหลดขึ้นไป
-                    const { data: urlData } = supabaseClient.storage
-                        .from('logos')
-                        .getPublicUrl(filePath);
-
-                    currentLogoUrl = urlData.publicUrl;
-                    statusDiv.innerHTML = `✓ อัปโหลดและแชร์ลิงก์สำเร็จ! <a href="${currentLogoUrl}" target="_blank" class="underline text-pink-600">ดูรูปภาพออนไลน์</a>`;
-                    processRealtimePreview();
-
-                } catch (err) {
-                    statusDiv.innerText = "อัปโหลดล้มเหลว: " + err.message;
-                    console.error(err);
-                }
-            });
-        }
+                // เปลี่ยนค่ารูปตราในระบบเพื่อนำมาใช้งานทันที
+                logoUrl = publicUrl;
+                logoColorUrl = publicUrl;
+                
+                statusEl.textContent = '✅ อัปโหลดตราสัญลักษณ์และเชื่อมต่อสำเร็จ!';
+                statusEl.className = 'text-xs font-bold mt-1.5 text-emerald-600';
+                
+                // รีโหลดโครงสร้างการแสดงผลกระดาษทันที
+                processRealtimePreview();
+            } catch (error) {
+                console.error(error);
+                statusEl.textContent = '❌ อัปโหลดไม่สำเร็จ: ' + error.message;
+                statusEl.className = 'text-xs font-bold mt-1.5 text-red-600';
+            }
+        });
 
         function changeMode(modeSelection) {
             currentDocumentMode = modeSelection;
@@ -443,7 +405,7 @@
             if (currentDocumentMode === 'internal') {
                 headerHTML = `
                     <div style="position: relative; width: 100%; height: 2.0cm; margin-bottom: 5mm;">
-                        <img src="${currentLogoUrl}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
+                        <img src="${logoUrl}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
                         <div style="font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 1mm;">บันทึกข้อความ</div>
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 5mm; font-family: 'TH SarabunPSK'; border: none;">
@@ -463,7 +425,7 @@
             } else {
                 headerHTML = `
                     <div style="width: 100%; text-align: center; margin-bottom: 5mm;">
-                        <img src="${currentLogoUrl}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
+                        <img src="${logoColorUrl}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
                     </div>
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 4mm; font-family: 'TH SarabunPSK'; border: none;">
                         <tr><td style="width: 50%; vertical-align: top; border: none; font-size: 16pt;"><span style="font-weight: bold;">ที่</span>&nbsp;&nbsp;<span style="font-weight: normal;">${docId}</span></td><td style="width: 50%; text-align: right; vertical-align: top; border: none; font-size: 16pt;">จุฬาลงกรณ์มหาวิทยาลัย<br>ถนนพญาไท กทม. 10330</td></tr>
@@ -507,6 +469,7 @@
                     </div>`;
             }
 
+            // รวบรวมข้อมูลให้อยู่ในผืนผ้าใบเดียวกัน โดยไม่บังคับขึ้นหน้าใหม่ล่วงหน้า
             page1.innerHTML = `
                 ${headerHTML}
                 <div style="margin-top: 6mm;">
@@ -520,6 +483,7 @@
         function triggerExportWord() {
             const filenameInput = document.getElementById('file-name-input').value || 'document';
             
+            // ดึงข้อมูลตัวแปรเพื่อง่ายต่อการแปะลงโครงสร้าง Word ดั้งเดิม
             const docId = document.getElementById('data-doc-id').value;
             const docDate = document.getElementById('data-date').value;
             const subject = document.getElementById('data-subject').value;
@@ -538,39 +502,32 @@
 
             let wordContent = '';
 
+            // ใช้ระบบจัดตารางแบบเก่าของ Word เพื่อไม่ให้ระยะเพี้ยน
             if (currentDocumentMode === 'internal') {
                 let throughRow = '';
                 if(through.trim() !== '') {
-                    throughRow = `<tr><td width="15%" style="font-family:'TH SarabunPSK';font-size:16pt;font-weight:bold;vertical-align:top;">ผ่าน</td>
+                    throughRow = `<tr><td width="15%" style="font-family:'TH SarabunPSK';font-size:20pt;font-weight:bold;vertical-align:top;">ผ่าน</td>
                                    <td width="85%" style="font-family:'TH SarabunPSK';font-size:16pt;vertical-align:top;">${through}</td></tr>`;
                 }
                 wordContent = `
-                    <table border="0" cellspacing="0" cellpadding="0" width="100%" style="font-family:'TH SarabunPSK';">
+                    <p align="center" style="text-align:center;margin-bottom:20pt;">
+                        <font size="6" face="TH SarabunPSK"><b>บันทึกข้อความ</b></font>
+                    </p>
+                    <table border="0" cellspacing="0" cellpadding="2" width="100%">
                         <tr>
-                            <td width="20%" style="vertical-align:top;">
-                                <img src="${currentLogoUrl}" width="110" height="auto" />
-                            </td>
-                            <td width="80%" style="text-align:center; vertical-align:middle; padding-right:80px;">
-                                <font size="6"><b>บันทึกข้อความ</b></font>
-                            </td>
-                        </tr>
-                    </table>
-                    <br/>
-                    <table border="0" cellspacing="0" cellpadding="2" width="100%" style="font-family:'TH SarabunPSK'; border-bottom: 2px solid black;">
-                        <tr>
-                            <td colspan="2" style="font-size:16pt;">
+                            <td colspan="2" style="font-family:'TH SarabunPSK';font-size:16pt;">
                                 <b>ส่วนงาน</b> ${dept} &nbsp;&nbsp;&nbsp;&nbsp;<b>โทร.</b> ${phone}
                             </td>
                         </tr>
                         <tr>
-                            <td width="50%" style="font-size:16pt;"><b>ที่</b> ${docId}</td>
-                            <td width="50%" style="font-size:16pt;"><b>วันที่</b> ${docDate}</td>
+                            <td width="50%" style="font-family:'TH SarabunPSK';font-size:16pt;"><b>ที่</b> ${docId}</td>
+                            <td width="50%" style="font-family:'TH SarabunPSK';font-size:16pt;"><b>วันที่</b> ${docDate}</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="font-size:16pt;"><b>เรื่อง</b> ${subject}</td>
+                            <td colspan="2" style="font-family:'TH SarabunPSK';font-size:16pt;"><b>เรื่อง</b> ${subject}</td>
                         </tr>
                         <tr>
-                            <td colspan="2" style="font-size:16pt;"><b>เรียน</b> ${learn}</td>
+                            <td colspan="2" style="font-family:'TH SarabunPSK';font-size:16pt;"><b>เรียน</b> ${learn}</td>
                         </tr>
                         ${throughRow}
                     </table>
@@ -578,9 +535,6 @@
                 `;
             } else {
                 wordContent = `
-                    <div style="text-align:center; width:100%; margin-bottom:15pt;">
-                        <img src="${currentLogoUrl}" width="150" height="auto" style="margin: 0 auto;" />
-                    </div>
                     <table border="0" cellspacing="0" cellpadding="2" width="100%">
                         <tr>
                             <td width="50%" style="font-family:'TH SarabunPSK';font-size:16pt;vertical-align:top;"><b>ที่</b> ${docId}</td>
@@ -605,10 +559,12 @@
                 `;
             }
 
+            // ใส่แท็กย่อหน้า โดยใช้คำสั่ง mso-char-indent-count เพื่อควบคุมการย่อหน้า 2.5 ซม. ใน MS Word
             textParagraphs.forEach(p => {
-                wordContent += `<p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.25;text-align:justify;text-justify:inter-character;text-indent:72pt;mso-char-indent-count:5.0;margin-bottom:16pt;">${p.text}</p>`;
+                wordContent += `<p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.25;text-align:justify;text-indent:72pt;mso-char-indent-count:5.0;margin-bottom:16pt;">${p.text}</p>`;
             });
 
+            // ส่วนท้าย (คำลงท้าย / ผู้ลงนาม) สำหรับ MS Word
             if (currentDocumentMode === 'internal') {
                 wordContent += `
                     <br/><br/>
@@ -679,7 +635,7 @@
 
         function triggerExportPDF() {
             const filenameInput = document.getElementById('file-name-input').value || 'document';
-            const element = document.getElementById('page-render-area');
+            const element = document.getElementById('preview-container');
             
             const opt = {
                 margin:       [0, 0, 0, 0], 
