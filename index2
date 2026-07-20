@@ -1,0 +1,110 @@
+</main>
+
+<script>
+    // 🔗 ลิงก์รูปภาพจาก Supabase ส่วนกลางของคุณ
+    const logoBlackUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/Logoblack.png";
+    const logoColorUrl = "https://lbvmwevlnwuyplnyrdlc.supabase.co/storage/v1/object/public/logo/logocolor.png";
+
+    // ตัวแปรสำหรับเก็บไฟล์ภาพแบบ Blob ชั่วคราวเพื่อป้องกัน CORS ตอนดาวน์โหลด
+    let blobLogoBlack = "";
+    let blobLogoColor = "";
+
+    // ฟังก์ชันโหลดรูปภาพล่วงหน้าแปลงเป็น Blob เพื่อแก้ปัญหาภาพหายตอนเซฟไฟล์
+    async function preloadLogosAsBlobs() {
+        try {
+            const [resBlack, resColor] = await Promise.all([
+                fetch(logoBlackUrl),
+                fetch(logoColorUrl)
+            ]);
+            const [blobB, blobC] = await Promise.all([
+                resBlack.blob(),
+                resColor.blob()
+            ]);
+            blobLogoBlack = URL.createObjectURL(blobB);
+            blobLogoColor = URL.createObjectURL(blobC);
+            
+            processRealtimePreview();
+        } catch (error) {
+            console.error("ไม่สามารถโหลดโลโก้ล่วงหน้าได้เนื่องจากสิทธิ์ความปลอดภัย:", error);
+            blobLogoBlack = logoBlackUrl;
+            blobLogoColor = logoColorUrl;
+        }
+    }
+
+    let currentDocumentMode = 'internal'; 
+
+    let textParagraphs = [
+        { label: 'ย่อหน้าที่ 1', text: 'ด้วย บริษัท สคูลดิโอ จำกัด ได้จัดโครงการอบรมเชิงปฏิบัติการ หลักสูตร AI Automation Transformation รุ่นที่ 3 ในรูปแบบการเรียนออนไลน์ควบคู่กับการจัด Workshop เชิงปฏิบัติการ ณ สถานที่ของบริษัท สคูลดิโอ จำกัด โดยเรียนออนไลน์ตั้งแต่วันที่ 4 กรกฎาคม 2569 และเข้าร่วม Workshop เชิงปฏิบัติการในวันเสาร์ที่ 11 กรกฎาคม 2569 วันเสาร์ที่ 18 กรกฎาคม 2569 และวันเสาร์ที่ 26 กรกฎาคม 2569 วัตถุประสงค์เพื่อเสริมสร้างความรู้และทักษะด้านการออกแบบและพัฒนาระบบ AI Automation เพื่อนำมาประยุกต์ใช้ในกระบวนการทำงานขององค์กร อันจะช่วยเพิ่มประสิทธิภาพในการทำงาน ลดระยะเวลาในการดำเนินงาน และลดโอกาสการเกิดข้อผิดพลาดจากการปฏิบัติงานของบุคลากร' },
+        { label: 'ย่อหน้าที่ 2', text: 'โครงการดังกล่าวมุ่งเน้นการพัฒนาความรู้ความเข้าใจด้าน AI Automation และ Workflow Automation เพื่อให้บุคลากรสามารถวิเคราะห์และคัดเลือกกระบวนการทำงานที่เหมาะสมในการนำเทคโนโลยี AI มาใช้งาน ตลอดจนสามารถสร้างต้นแบบของระบบ Automation ที่สามารถนำไปใช้งานจริงภายในหน่วยงาน และยกระดับทักษะของบุคลากรให้สอดคล้องและรองรับการเปลี่ยนแปลงด้านเทคโนโลยีและนโยบายดิจิทัลขององค์กร (รายละเอียดตามเอกสารแนบ)' },
+        { label: 'ย่อหน้าที่ 3', text: 'จึงเรียนมาเพื่อโปรดพิจารณาอนุมัติจัดตั้งโครงการและงบประมาณสนับสนุนดังกล่าวด้วย จะเป็นพระคุณยิ่ง' }
+    ];
+
+    // ==========================================
+    // 1. ฟังก์ชันสร้าง Header สำหรับ PREVIEW หน้าเว็บ
+    // ==========================================
+    function generatePreviewHeader() {
+        const targetBlackImg = blobLogoBlack || logoBlackUrl;
+        const targetColorImg = blobLogoColor || logoColorUrl;
+        const currentLogo = currentDocumentMode === 'internal' ? targetBlackImg : targetColorImg;
+
+        if (currentDocumentMode === 'internal') {
+            return `
+                <div style="position: relative; width: 100%; height: 2.0cm; margin-bottom: 5mm;">
+                    <img src="${currentLogo}" style="position: absolute; left: 0; top: 0; height: 1.8cm; width: auto; display: block;" />
+                    <div style="font-size: 29pt; font-weight: bold; text-align: center; width: 100%; padding-top: 1mm; font-family: 'TH SarabunPSK';">บันทึกข้อความ</div>
+                </div>`;
+        } else {
+            return `
+                <div style="width: 100%; text-align: center; margin-bottom: 5mm;">
+                    <img src="${currentLogo}" style="height: 3.0cm; width: auto; margin: 0 auto; display: block;" />
+                </div>`;
+        }
+    }
+
+    // ==========================================
+    // 2. ฟังก์ชันสร้าง HTML สำหรับไฟล์ DOWNLOAD (Word/PDF)
+    // ==========================================
+    function generateWordContent() {
+        const docId = document.getElementById('doc-id')?.value || '';
+        const through = document.getElementById('through')?.value || '';
+        const phone = document.getElementById('phone')?.value || '';
+        const fax = document.getElementById('fax')?.value || '';
+        const fDeptMain = document.getElementById('footer-dept-main')?.value || '';
+        const fDeptSub = document.getElementById('footer-dept-sub')?.value || '';
+        const fEmail = document.getElementById('footer-email')?.value || '';
+
+        const currentLogoUrl = currentDocumentMode === 'internal' ? logoBlackUrl : logoColorUrl;
+
+        let wordContent = '';
+
+        if (currentDocumentMode === 'internal') {
+            wordContent = `
+                <div style="position:relative; width:100%; margin-bottom:15pt;">
+                    <img src="${currentLogoUrl}" width="68" height="68" style="float:left; margin-right:15pt;"/>
+                    <p align="center" style="text-align:center; margin-top:10pt; margin-bottom:0;">
+                        <font size="6" face="TH SarabunPSK"><b>บันทึกข้อความ</b></font>
+                    </p>
+                    <div style="clear:both;"></div>
+                </div>`;
+        } else {
+            wordContent = `
+                <div align="center" style="text-align:center; margin-bottom:15pt;">
+                    <img src="${currentLogoUrl}" width="113" height="113"/>
+                </div>`;
+        }
+
+        // เพิ่มรายละเอียดส่วนท้าย (Footer Info)
+        wordContent += `
+            <br/><br/>
+            <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">${fDeptMain} ${fDeptSub}</p>
+            <p style="font-family:'TH SarabunPSK';font-size:16pt;line-height:1.2;margin:0;">โทรศัพท์ ${phone} โทรสาร ${fax}</p>
+            <p style="font-family:'TH SarabunPSK';font-size:15pt;line-height:1.2;margin:0;">ไปรษณีย์อิเล็กทรอนิกส์ ${fEmail}</p>`;
+
+        return wordContent;
+    }
+
+    // เริ่มต้นระบบ
+    preloadLogosAsBlobs();
+    if (typeof buildParagraphControls === 'function') buildParagraphControls();
+    if (typeof changeMode === 'function') changeMode('internal');
+</script>
